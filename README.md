@@ -89,7 +89,3 @@ A full-stack, professional order management application built with **Spring Boot
 ## 🛡️ License
 Distributed under the MIT License. See `LICENSE` for more information.
 
----
-
-### **Author**
-Developed by [Your Name/GitHub Profile]
