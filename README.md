@@ -27,10 +27,9 @@ A full-stack, professional order management application built with **Spring Boot
 | Layer | Technologies |
 |--- |--- |
 | **Backend** | Java 17, Spring Boot 3.x, Spring Data JPA, Spring Security |
-| **Frontend** | React 19, Vite, Tailwind CSS, Axios, Lucide React |
+| **Frontend** | React 19, Vite, Tailwind CSS, Axios |
 | **Database** | PostgreSQL |
 | **Auth** | JWT (jjwt 0.13.0) |
-| **API Docs** | SpringDoc OpenAPI (Swagger UI) |
 
 ---
 
@@ -38,7 +37,7 @@ A full-stack, professional order management application built with **Spring Boot
 
 ### **Prerequisites**
 - Java 17+
-- Node.js (v18 or higher)
+- SpringBoot (3.x)
 - PostgreSQL Database
 - Maven
 
@@ -84,12 +83,6 @@ A full-stack, professional order management application built with **Spring Boot
 │   └── tailwind.config.js  # Styling configuration
 └── README.md               # You are here
 ```
-
----
-
-## 📖 API Documentation
-Once the backend is running, you can access the interactive Swagger UI at:
-`http://localhost:8085/api/swagger-ui/index.html`
 
 ---
 
