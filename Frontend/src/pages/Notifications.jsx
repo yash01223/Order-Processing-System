@@ -14,7 +14,7 @@ const Notifications = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
 
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 4;
 
   const fetchNotifications = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -34,6 +34,16 @@ const Notifications = () => {
   }, [page]);
 
   useEffect(() => { fetchNotifications(); }, [fetchNotifications]);
+
+  // ── Auto-refresh: Poll every 60s to sync with backend cleanup ──
+  useEffect(() => {
+    const timer = setInterval(() => {
+      fetchNotifications(true);
+    }, 60000);
+    return () => clearInterval(timer);
+  }, [fetchNotifications]);
+
+  const NOTIFICATION_EXPIRY_MS = 1 * 60 * 60 * 1000;
 
   const getTypeIcon = (type) => {
     switch (type) {
@@ -75,16 +85,6 @@ const Notifications = () => {
             {!loading && ` · ${totalElements}`}
           </p>
         </div>
-
-        {/* <button
-          onClick={() => fetchNotifications(true)}
-          disabled={refreshing}
-          className="btn btn-outline btn-sm gap-2"
-          title="Refresh"
-        >
-          <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
-          Refresh
-        </button> */}
       </div>
 
       {/* List */}
@@ -108,10 +108,15 @@ const Notifications = () => {
         </div>
       ) : (
         <div className="space-y-2">
-          {notifications.map((n, idx) => (
+          {notifications
+            .filter(n => {
+              const diff = Date.now() - new Date(n.createdAt).getTime();
+              return diff < NOTIFICATION_EXPIRY_MS;
+            })
+            .map((n, idx) => (
             <div
               key={n.id}
-              className="card flex items-start gap-4 p-4 transition-all duration-200 animate-fade-in hover:border-surfaceBorder/80"
+              className="card flex items-start gap-4 p-4 transition-all duration-300 animate-fade-in hover:border-surfaceBorder/80"
               style={{ animationDelay: `${idx * 40}ms` }}
             >
               {/* Icon */}
@@ -122,7 +127,12 @@ const Notifications = () => {
                 <p className="text-sm leading-relaxed text-mutedLight">
                   {n.message}
                 </p>
-                <p className="text-xs text-muted mt-1">{formatTime(n.createdAt)}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-[10px] text-muted">{formatTime(n.createdAt)}</p>
+                  {!n.isRead && (
+                    <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
+                  )}
+                </div>
               </div>
             </div>
           ))}

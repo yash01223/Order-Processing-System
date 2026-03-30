@@ -43,6 +43,7 @@ public class OrderResponse {
     private String status;
     private BigDecimal totalAmount;
     private LocalDateTime createdAt;
+    private LocalDateTime statusUpdatedAt;
 
     /**
      * Null for list responses, populated for detail responses.

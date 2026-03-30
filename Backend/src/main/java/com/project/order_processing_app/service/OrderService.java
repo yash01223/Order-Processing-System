@@ -18,10 +18,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,6 +57,18 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderStatusHistoryRepository historyRepository;
     private final NotificationService notificationService;
+
+    /**
+     * Automatic cleanup task: runs every 60 seconds.
+     * Deletes orders that are Delivered or Cancelled and whose status was last updated
+     * more than 5 minutes ago.
+     */
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    public void purgeCompletedOrders() {
+        LocalDateTime threshold = LocalDateTime.now().minusMinutes(5);
+        orderRepository.deleteExpiredOrders(threshold);
+    }
 
     // ═══════════════════════════════════════════════════════════
     // PLACE ORDER — POST /api/orders [CUSTOMER]
@@ -265,6 +279,7 @@ public class OrderService {
         // Record old status before updating
         OrderStatus oldStatus = order.getStatus();
         order.setStatus(nextStatus);
+        order.setStatusUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
 
         // Append to audit trail
@@ -327,6 +342,7 @@ public class OrderService {
 
         // ── Update status to CANCELLED ───────────────────────────────────
         order.setStatus(OrderStatus.CANCELLED);
+        order.setStatusUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
 
         // ── Restore stock for each item in the cancelled order ───────────
@@ -422,7 +438,8 @@ public class OrderService {
 
         builder.status(order.getStatus() != null ? order.getStatus().name() : null)
                 .totalAmount(order.getTotalAmount())
-                .createdAt(order.getCreatedAt());
+                .createdAt(order.getCreatedAt())
+                .statusUpdatedAt(order.getStatusUpdatedAt());
 
         if (includeItems && order.getItems() != null) {
             List<OrderItemResponse> itemResponses = order.getItems().stream()

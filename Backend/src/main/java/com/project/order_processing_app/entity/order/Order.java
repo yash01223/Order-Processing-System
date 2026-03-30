@@ -103,8 +103,16 @@ public class Order {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    /**
+     * Last status update timestamp.
+     * Used for the 5-minute automatic deletion task (Delivered/Cancelled).
+     */
+    @Column(name = "status_updated_at", nullable = false)
+    private LocalDateTime statusUpdatedAt;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        this.statusUpdatedAt = LocalDateTime.now();
     }
 }

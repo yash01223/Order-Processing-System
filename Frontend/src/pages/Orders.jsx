@@ -157,6 +157,19 @@ const Orders = () => {
   }, [page]);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
+ 
+   /**
+    * Auto-refresh: Poll every 30s to sync with backend cleanup.
+    * This ensures the dashboard stays tidy by removing expired orders automatically.
+    */
+   useEffect(() => {
+     const timer = setInterval(() => {
+       fetchOrders(true);
+     }, 30000);
+     return () => clearInterval(timer);
+   }, [fetchOrders]);
+ 
+   const ORDER_EXPIRY_MS = 5 * 60 * 1000;
 
   const advanceStatus = async (id, currentStatus) => {
     const next = nextStatus(currentStatus);
@@ -231,8 +244,15 @@ const Orders = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((o) => (
-                    <tr key={o.id} className="table-row animate-fade-in">
+                  {orders
+                    .filter(o => {
+                      if (o.status !== 'DELIVERED' && o.status !== 'CANCELLED') return true;
+                      const updatedAt = o.statusUpdatedAt ? new Date(o.statusUpdatedAt).getTime() : new Date(o.createdAt).getTime();
+                      const diff = Date.now() - updatedAt;
+                      return diff < ORDER_EXPIRY_MS;
+                    })
+                    .map((o) => (
+                    <tr key={o.id} className="table-row animate-fade-in shadow-sm">
                       <td className="table-td font-mono text-xs text-muted">
                         #{String(o.id).padStart(5, '0')}
                       </td>

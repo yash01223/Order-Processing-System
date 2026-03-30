@@ -123,7 +123,7 @@ const Users = () => {
   }, [search, users]);
 
   const deleteUser = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete user "${name}"? This will also delete all their orders and notifications permanently.`)) {
+    if (!window.confirm(`Are you sure you want to delete user "${name}"?`)) {
       return;
     }
 

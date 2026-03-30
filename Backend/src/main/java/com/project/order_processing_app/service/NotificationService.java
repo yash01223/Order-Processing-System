@@ -9,8 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 /**
  * NotificationService — handles creation and retrieval of notifications.
@@ -25,6 +28,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+
+    /**
+     * Automatic cleanup task: runs every 30 seconds.
+     * Deletes any notification that is older than 1 minute.
+     */
+    @Scheduled(fixedRate = 30*60*1000)
+    @Transactional
+    public void cleanOldNotifications() {
+        LocalDateTime expiryTime = LocalDateTime.now().minusHours(1);
+        notificationRepository.deleteByCreatedAtBefore(expiryTime);
+    }
 
     // ═══════════════════════════════════════════════════════════
     //  INTERNAL — called by OrderService after each status change
