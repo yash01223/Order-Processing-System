@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * UserResponse — Data Transfer Object representing a sanitized User.
  * Ensures we don't accidentally leak User passwords mapping directly to the frontend.
@@ -18,4 +20,5 @@ public class UserResponse {
     private String name;
     private String email;
     private String role;
+    private LocalDateTime createdAt;
 }

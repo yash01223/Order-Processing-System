@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import api from '../api/axios';
 import {
   ShoppingCart, Edit, Trash2, Plus, Search, X, Package,
-  Tag, DollarSign, Layers, Save, AlertCircle,
+  Tag, IndianRupee, Layers, Save, AlertCircle,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -67,7 +67,7 @@ const ProductModal = ({ product, onClose, onSaved }) => {
   const fields = [
     { name: 'name', label: 'Product Name', type: 'text', icon: <Package size={14} />, placeholder: 'e.g. Gaming Laptop' },
     { name: 'category', label: 'Category', type: 'text', icon: <Tag size={14} />, placeholder: 'e.g. Electronics' },
-    { name: 'price', label: 'Price ($)', type: 'number', icon: <DollarSign size={14} />, placeholder: '0.00', min: '0', step: '0.01' },
+    { name: 'price', label: 'Price (₹)', type: 'number', icon: <IndianRupee size={14} />, placeholder: '0.00', min: '0', step: '0.01' },
     { name: 'stockCount', label: 'Stock Quantity', type: 'number', icon: <Layers size={14} />, placeholder: '0', min: '0' },
   ];
 
@@ -336,7 +336,7 @@ const Products = () => {
 
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xl font-bold text-gradient-primary">
-                      ${Number(p.price).toFixed(2)}
+                      ₹{Number(p.price).toFixed(2)}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${p.inStock ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
                       {p.inStock ? `${p.stockCount} left` : 'Out of stock'}

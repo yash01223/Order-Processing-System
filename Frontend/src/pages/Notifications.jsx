@@ -72,11 +72,11 @@ const Notifications = () => {
           </h1>
           <p className="page-subtitle">
             Order status updates and history
-            {!loading && ` · ${totalElements} total`}
+            {!loading && ` · ${totalElements}`}
           </p>
         </div>
 
-        <button
+        {/* <button
           onClick={() => fetchNotifications(true)}
           disabled={refreshing}
           className="btn btn-outline btn-sm gap-2"
@@ -84,7 +84,7 @@ const Notifications = () => {
         >
           <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
           Refresh
-        </button>
+        </button> */}
       </div>
 
       {/* List */}

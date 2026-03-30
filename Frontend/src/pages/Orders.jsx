@@ -4,7 +4,7 @@ import api from '../api/axios';
 import { toast } from 'react-toastify';
 import {
   FileText, Eye, XCircle, X,
-  Package, Calendar, DollarSign, User2, ChevronRight, ChevronLeft,
+  Package, Calendar, IndianRupee, User2, ChevronRight, ChevronLeft,
   RefreshCw,
 } from 'lucide-react';
 
@@ -75,7 +75,7 @@ const OrderDetailModal = ({ orderId, onClose }) => {
                 {[
                   { label: 'Customer', value: order.customerName || '—', icon: <User2 size={13} className="text-primary" /> },
                   { label: 'Status', value: <span className={`status-badge ${statusClass(order.status)}`}>{order.status}</span>, icon: null },
-                  { label: 'Total', value: `$${Number(order.totalAmount || 0).toFixed(2)}`, icon: <DollarSign size={13} className="text-secondary" /> },
+                  { label: 'Total', value: `₹${Number(order.totalAmount || 0).toFixed(2)}`, icon: <IndianRupee size={13} className="text-secondary" /> },
                   { label: 'Date', value: new Date(order.createdAt).toLocaleDateString(), icon: <Calendar size={13} className="text-muted" /> },
                 ].map((m, i) => (
                   <div key={i} className="bg-dark rounded-lg p-3 border border-surfaceBorder">
@@ -99,17 +99,17 @@ const OrderDetailModal = ({ orderId, onClose }) => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-white truncate">{item.productName}</p>
-                          <p className="text-xs text-muted">Qty: {item.quantity} × ${Number(item.priceAtPurchase).toFixed(2)}</p>
+                          <p className="text-xs text-muted">Qty: {item.quantity} × ₹{Number(item.priceAtPurchase).toFixed(2)}</p>
                         </div>
                         <div className="font-bold text-white text-sm flex-shrink-0">
-                          ${Number(item.lineTotal).toFixed(2)}
+                          ₹{Number(item.lineTotal).toFixed(2)}
                         </div>
                       </div>
                     ))}
                   </div>
                   <div className="flex justify-between items-center px-3 pt-3 border-t border-surfaceBorder mt-3">
                     <span className="text-sm text-muted">Grand Total</span>
-                    <span className="font-bold text-white text-lg">${Number(order.totalAmount).toFixed(2)}</span>
+                    <span className="font-bold text-white text-lg">₹{Number(order.totalAmount).toFixed(2)}</span>
                   </div>
                 </div>
               ) : (
@@ -248,7 +248,7 @@ const Orders = () => {
                           : '—'}
                       </td>
                       <td className="table-td text-right font-bold text-white">
-                        ${Number(o.totalAmount || 0).toFixed(2)}
+                        ₹{Number(o.totalAmount || 0).toFixed(2)}
                       </td>
                       <td className="table-td">
                         <span className={`status-badge ${statusClass(o.status)}`}>{o.status}</span>

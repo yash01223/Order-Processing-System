@@ -74,6 +74,14 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
 
     /**
+     * Cascading: Deleting an Order deletes its entire audit trail.
+     * mappedBy points to the "order" field in the OrderStatusHistory entity.
+     */
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<OrderStatusHistory> history = new ArrayList<>();
+
+    /**
      * Current status in the order pipeline.
      * Defaults to PENDING when a new order is placed.
      * Transitions are validated and enforced in OrderService.

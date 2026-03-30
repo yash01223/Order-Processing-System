@@ -1,6 +1,7 @@
 package com.project.order_processing_app.entity;
 
 //import com.project.order_processing_app.entity.enums.Role;
+import com.project.order_processing_app.entity.order.Order;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -72,6 +74,22 @@ public class User implements UserDetails {
     /** Auto-set at creation time, never modified after */
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    /**
+     * Cascading: Deleting a User deletes all their Orders.
+     * mappedBy points to the "user" field in the Order entity.
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Order> orders = new ArrayList<>();
+
+    /**
+     * Cascading: Deleting a User deletes all their Notifications.
+     * mappedBy points to the "user" field in the Notification entity.
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Notification> notifications = new ArrayList<>();
 
     /**
      * @PrePersist lifecycle hook: called by Hibernate just before INSERT.

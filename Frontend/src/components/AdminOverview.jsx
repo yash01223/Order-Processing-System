@@ -3,21 +3,21 @@ import { NavLink } from 'react-router-dom';
 import api from '../api/axios';
 import {
   Package,
-  DollarSign,
   Clock,
   CheckCircle,
   RefreshCw,
   ArrowRight,
   TrendingUp,
+  IndianRupee,
 } from 'lucide-react';
 
 const statusClass = (status) => {
   switch (status) {
-    case 'PENDING':    return 'status-pending';
-    case 'CONFIRMED':  return 'status-confirmed';
+    case 'PENDING': return 'status-pending';
+    case 'CONFIRMED': return 'status-confirmed';
     case 'DISPATCHED': return 'status-dispatched';
-    case 'DELIVERED':  return 'status-delivered';
-    case 'CANCELLED':  return 'status-cancelled';
+    case 'DELIVERED': return 'status-delivered';
+    case 'CANCELLED': return 'status-cancelled';
     default: return 'bg-surfaceHover text-muted';
   }
 };
@@ -65,31 +65,27 @@ const AdminOverview = () => {
   const statCards = stats ? [
     {
       title: 'Total Revenue',
-      value: `$${Number(stats.totalRevenue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      icon: <DollarSign size={22} className="text-secondary" />,
+      value: `₹${Number(stats.totalRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      icon: <IndianRupee size={22} className="text-secondary" />,
       iconBg: 'bg-secondary/10 border border-secondary/20',
-      trend: '+12% this month',
     },
     {
       title: 'Total Orders',
       value: stats.totalOrders,
       icon: <Package size={22} className="text-primary" />,
       iconBg: 'bg-primary/10 border border-primary/20',
-      trend: 'All time',
     },
     {
       title: 'Pending',
       value: stats.pendingOrders,
       icon: <Clock size={22} className="text-accent" />,
       iconBg: 'bg-accent/10 border border-accent/20',
-      trend: 'Needs action',
     },
     {
       title: 'Delivered',
       value: stats.deliveredOrders,
       icon: <CheckCircle size={22} className="text-emerald-400" />,
       iconBg: 'bg-emerald-500/10 border border-emerald-500/20',
-      trend: 'Successfully fulfilled',
     },
   ] : [];
 

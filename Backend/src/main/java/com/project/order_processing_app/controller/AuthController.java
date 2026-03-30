@@ -10,22 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * AuthController — handles user registration and login.
- *
- * Base path: /api/auth  (context-path /api + @RequestMapping /auth)
- * Both endpoints are PUBLIC — no JWT token required.
- * Configured in SecurityConfig: .requestMatchers("/auth/**").permitAll()
- *
- * @RestController = @Controller + @ResponseBody
- *   → Every method return value is serialized to JSON automatically.
- *
- * Controllers are kept THIN:
- *   - Extract and validate the request body
- *   - Delegate ALL business logic to the service
- *   - Wrap the result in the appropriate ResponseEntity with HTTP status
- *   - Never contain if/else business logic or direct DB calls
- */
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

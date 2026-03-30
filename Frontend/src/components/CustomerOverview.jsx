@@ -51,7 +51,7 @@ const CustomerOverview = () => {
     },
     {
       title: 'My Orders',
-      desc: 'Track your recent purchases and order statuses.',
+      desc: 'Track your recent purchases.',
       icon: <Receipt size={28} className="text-secondary" />,
       bg: 'bg-secondary/10 border-secondary/20',
       to: '/orders',
@@ -136,7 +136,7 @@ const CustomerOverview = () => {
                       {o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                     </td>
                     <td className="table-td text-right font-semibold text-white">
-                      ${Number(o.totalAmount || 0).toFixed(2)}
+                      ₹{Number(o.totalAmount || 0).toFixed(2)}
                     </td>
                     <td className="table-td">
                       <span className={`status-badge ${statusClass(o.status)}`}>{o.status}</span>

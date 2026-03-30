@@ -71,7 +71,7 @@ const Cart = () => {
                   <Tag size={11} className="text-muted" />
                   <span className="text-xs text-muted">{item.product.category}</span>
                 </div>
-                <p className="text-primary font-bold text-sm mt-1">${Number(item.product.price).toFixed(2)} each</p>
+                <p className="text-primary font-bold text-sm mt-1">₹{Number(item.product.price).toFixed(2)} each</p>
               </div>
 
               {/* Quantity Control */}
@@ -94,8 +94,8 @@ const Cart = () => {
 
               {/* Line Total */}
               <div className="w-24 text-right flex-shrink-0">
-                <p className="font-bold text-white">${(item.product.price * item.quantity).toFixed(2)}</p>
-                <p className="text-xs text-muted">{item.quantity} × ${Number(item.product.price).toFixed(2)}</p>
+                <p className="font-bold text-white">₹{(item.product.price * item.quantity).toFixed(2)}</p>
+                <p className="text-xs text-muted">{item.quantity} × ₹{Number(item.product.price).toFixed(2)}</p>
               </div>
 
               {/* Remove */}
@@ -122,7 +122,7 @@ const Cart = () => {
                 <div key={item.product.id} className="flex justify-between text-sm">
                   <span className="text-muted truncate max-w-[160px]">{item.product.name} × {item.quantity}</span>
                   <span className="text-white font-medium flex-shrink-0 ml-2">
-                    ${(item.product.price * item.quantity).toFixed(2)}
+                    ₹{(item.product.price * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -131,7 +131,7 @@ const Cart = () => {
             <div className="border-t border-surfaceBorder pt-4 space-y-3 mb-5">
               <div className="flex justify-between text-sm text-muted">
                 <span>Subtotal</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>₹{cartTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm text-muted">
                 <span className="flex items-center gap-1.5"><Truck size={13} /> Shipping</span>
@@ -139,7 +139,7 @@ const Cart = () => {
               </div>
               <div className="flex justify-between text-sm text-muted">
                 <span>Tax (0%)</span>
-                <span>$0.00</span>
+                <span>₹0.00</span>
               </div>
             </div>
 
@@ -147,7 +147,7 @@ const Cart = () => {
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-white">Total</span>
                 <span className="text-2xl font-bold text-gradient-primary">
-                  ${cartTotal.toFixed(2)}
+                  ₹{cartTotal.toFixed(2)}
                 </span>
               </div>
             </div>

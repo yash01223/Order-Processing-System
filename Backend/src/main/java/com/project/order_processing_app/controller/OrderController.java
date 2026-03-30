@@ -13,23 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * OrderController — order placement, listing, detail, status advance, and cancellation.
- *
- * Base path: /api/orders
- *
- * Access rules:
- *   POST   /orders                → CUSTOMER (place order)
- *   GET    /orders                → CUSTOMER (my order list)
- *   GET    /orders/{id}           → CUSTOMER (my order detail)
- *   PATCH  /orders/{id}/status    → ADMIN    (advance pipeline status)
- *   PATCH  /orders/{id}/cancel    → CUSTOMER (cancel PENDING order)
- *
- * @AuthenticationPrincipal User currentUser:
- *   Spring injects the authenticated User entity (set by JwtAuthFilter into SecurityContext)
- *   directly as a method parameter. No need to call SecurityContextHolder manually.
- *   This works because our User entity implements UserDetails.
- */
+
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
