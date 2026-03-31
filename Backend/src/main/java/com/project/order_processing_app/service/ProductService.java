@@ -146,9 +146,8 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
         
-        // Soft delete: keep the record for order history, but hide it everywhere else
-        product.setDeleted(true);
-        productRepository.save(product);
+        // Hard delete: physically remove the product from the database
+        productRepository.delete(product);
     }
 
     // ═══════════════════════════════════════════════════════════

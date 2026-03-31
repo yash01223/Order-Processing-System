@@ -28,26 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * OrderService — the most critical service in the system.
- *
- * Responsibilities:
- * 1. Place orders with atomic stock validation and decrement
- * 2. Advance order status through the pipeline (admin)
- * 3. Cancel orders with atomic stock restoration (customer)
- * 4. Fetch order lists and details per user
- *
- * Every write operation uses @Transactional to guarantee atomicity.
- * If ANY step inside a transaction fails, ALL DB changes roll back.
- * This prevents ghost orders, overselling, and inconsistent stock counts.
- *
- * Phase 2 hooks:
- * After each status change: replace the direct
- * notificationService.createNotification()
- * call with kafkaProducer.publish(OrderStatusChangedEvent) — one-line
- * replacement.
- * NotificationConsumer will then handle the notification write asynchronously.
- */
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -67,33 +48,13 @@ public class OrderService {
     @Transactional
     public void purgeCompletedOrders() {
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(5);
-        orderRepository.deleteExpiredOrders(threshold);
+        List<Order> expiredOrders = orderRepository.findExpiredOrders(threshold);
+        if (!expiredOrders.isEmpty()) {
+            orderRepository.deleteAll(expiredOrders);
+        }
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // PLACE ORDER — POST /api/orders [CUSTOMER]
-    // ═══════════════════════════════════════════════════════════
-
-    /**
-     * Places a new order for the authenticated customer.
-     *
-     * @Transactional ensures ALL of the following happen atomically:
-     *                1. Validate stock for every item in the request
-     *                2. Create the Order entity (status = PENDING)
-     *                3. For each item: create OrderItem with price_at_purchase
-     *                snapshot
-     *                4. Decrement stock for each product
-     *                5. Write initial status history record
-     *                6. Create a "Order placed" notification for the customer
-     *
-     *                If ANY step fails (e.g., DB error, stock conflict), the ENTIRE
-     *                transaction rolls back — no partial orders, no ghost records.
-     *
-     * @param request     validated PlaceOrderRequest with list of {productId,
-     *                    quantity}
-     * @param currentUser the authenticated customer placing the order
-     * @return OrderResponse with the new order ID and details
-     */
+    
     @Transactional
     public OrderResponse placeOrder(PlaceOrderRequest request, User currentUser) {
 
@@ -137,6 +98,7 @@ public class OrderService {
                 .user(currentUser)
                 .status(OrderStatus.PENDING)
                 .totalAmount(totalAmount)
+                .statusUpdatedAt(LocalDateTime.now())
                 .build();
 
         Order savedOrder = orderRepository.save(order);
@@ -443,7 +405,7 @@ public class OrderService {
 
         if (includeItems && order.getItems() != null) {
             List<OrderItemResponse> itemResponses = order.getItems().stream()
-                    .map(this::toItemResponse)
+                    .map((OrderItem item) -> toItemResponse(item))
                     .collect(Collectors.toList());
             builder.items(itemResponses);
         }

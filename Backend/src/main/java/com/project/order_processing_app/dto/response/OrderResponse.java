@@ -10,9 +10,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * OrderResponse — outgoing order data for GET /api/orders and GET /api/orders/{id}
+ * OrderResponse — outgoing order data for GET /api/orders and GET
+ * /api/orders/{id}
  *
- * The list endpoint (GET /api/orders) returns orders WITHOUT items (items = null)
+ * The list endpoint (GET /api/orders) returns orders WITHOUT items (items =
+ * null)
  * for performance — no need to load all line items for a summary list.
  *
  * The detail endpoint (GET /api/orders/{id}) populates the items list
@@ -20,16 +22,18 @@ import java.util.List;
  *
  * Sample response (detail):
  * {
- *   "id": 42,
- *   "userId": 1,
- *   "customerName": "Yash Sangale",
- *   "status": "DISPATCHED",
- *   "totalAmount": 92999.97,
- *   "createdAt": "2024-01-10T09:00:00",
- *   "items": [
- *     { "productId": 1, "productName": "Gaming Laptop", "quantity": 1, "priceAtPurchase": 89999.99, "lineTotal": 89999.99 },
- *     { "productId": 3, "productName": "Mouse", "quantity": 3, "priceAtPurchase": 999.99, "lineTotal": 2999.97 }
- *   ]
+ * "id": 42,
+ * "userId": 1,
+ * "customerName": "Yash Sangale",
+ * "status": "DISPATCHED",
+ * "totalAmount": 92999.97,
+ * "createdAt": "2024-01-10T09:00:00",
+ * "items": [
+ * { "productId": 1, "productName": "Gaming Laptop", "quantity": 1,
+ * "priceAtPurchase": 89999.99, "lineTotal": 89999.99 },
+ * { "productId": 3, "productName": "Mouse", "quantity": 3, "priceAtPurchase":
+ * 999.99, "lineTotal": 2999.97 }
+ * ]
  * }
  */
 @Data

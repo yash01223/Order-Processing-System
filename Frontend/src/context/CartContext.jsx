@@ -67,7 +67,7 @@ export const CartProvider = ({ children }) => {
     try {
       const items = cart.map(i => ({ productId: i.product.id, quantity: i.quantity }));
       await api.post('/orders', { items });
-      toast.success('Order placed successfully!');
+      toast.success(' Order placed successfully!');
       clearCart();
       return true;
     } catch (err) {

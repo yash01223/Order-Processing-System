@@ -149,7 +149,7 @@ const Orders = () => {
       setTotalPages(data.totalPages || 1);
       setTotalElements(data.totalElements || 0);
     } catch (e) {
-      toast.error('Failed to fetch orders');
+      toast.error('Failed to fetch orders', { toastId: 'fetch-orders-error' });
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -158,14 +158,10 @@ const Orders = () => {
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
  
-   /**
-    * Auto-refresh: Poll every 30s to sync with backend cleanup.
-    * This ensures the dashboard stays tidy by removing expired orders automatically.
-    */
    useEffect(() => {
      const timer = setInterval(() => {
        fetchOrders(true);
-     }, 30000);
+     }, 60000);
      return () => clearInterval(timer);
    }, [fetchOrders]);
  

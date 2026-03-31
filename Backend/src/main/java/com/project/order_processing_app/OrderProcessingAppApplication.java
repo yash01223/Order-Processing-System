@@ -12,7 +12,3 @@ public class OrderProcessingAppApplication {
 		SpringApplication.run(OrderProcessingAppApplication.class, args);
 	}
 }
-
-
-
-

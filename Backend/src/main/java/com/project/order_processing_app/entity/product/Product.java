@@ -67,7 +67,4 @@ public class Product {
     @Column
     private String category;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean deleted = false;
 }

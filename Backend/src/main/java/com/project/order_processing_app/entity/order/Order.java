@@ -107,7 +107,7 @@ public class Order {
      * Last status update timestamp.
      * Used for the 5-minute automatic deletion task (Delivered/Cancelled).
      */
-    @Column(name = "status_updated_at", nullable = false)
+    @Column(name = "status_updated_at")
     private LocalDateTime statusUpdatedAt;
 
     @PrePersist
