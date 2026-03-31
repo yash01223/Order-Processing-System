@@ -34,6 +34,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final OtpService otpService;
+    private final EmailService emailService;
 
     // ═══════════════════════════════════════════════════════════
     // REGISTER — POST /api/auth/register
@@ -57,32 +59,86 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
 
-        // ── Step 1: Guard against duplicate emails
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateEmailException(request.getEmail());
+        // ── Step 1: Check if user already exists
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+
+        if (user != null) {
+            if (user.isVerified()) {
+                throw new DuplicateEmailException(request.getEmail());
+            }
+            // User exists but is not verified — allow them to continue to verification
+            // We can optionally update their name/password here if changed
+        } else {
+            // ── Step 2: Create new unverified User ────────────────────────
+            Role userRole = Role.CUSTOMER;
+            if (request.getRole() != null && request.getRole().equalsIgnoreCase("Admin")) {
+                userRole = Role.ADMIN;
+            }
+
+            user = User.builder()
+                    .name(request.getName())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(userRole)
+                    .isVerified(false) // Explicitly unverified
+                    .build();
+
+            user = userRepository.save(user);
         }
 
-        // ── Step 2: Build and persist the User entity ──────────────────
-        Role userRole = Role.CUSTOMER; // Default
-        if (request.getRole() != null && request.getRole().equalsIgnoreCase("Admin")) {
-            userRole = Role.ADMIN;
-        }
+        // ── Step 3: Generate and Send OTP ─────────────────────────────
+        String rawOtp = otpService.generateAndSaveOtp(user.getEmail());
+        emailService.sendEmailOtp(user.getEmail(), rawOtp);
 
-        User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                // BCrypt encodes the raw password: $2a$10$<salt><hash>
-                // The original password is never stored
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(userRole)
+        // Return response WITHOUT token — user must verify first
+        return AuthResponse.builder()
+                .userId(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
                 .build();
+    }
 
-        User savedUser = userRepository.save(user);
+    /**
+     * Verifies the OTP and activates the user account.
+     * Returns a JWT token on success.
+     */
+    @Transactional
+    public AuthResponse verifyOtp(String email, String otp) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
 
-        // ── Step 3: Generate JWT for immediate login after registration ─
-        String token = jwtUtil.generateToken(savedUser, savedUser.getId(), savedUser.getRole().name());
+        if (user.isVerified()) {
+            throw new RuntimeException("User is already verified.");
+        }
 
-        return buildAuthResponse(token, savedUser);
+        // Validate OTP (throws if invalid/expired)
+        otpService.validateOtp(email, otp);
+
+        // Mark user as verified
+        user.setVerified(true);
+        userRepository.save(user);
+
+        // Generate JWT for the now-verified user
+        String token = jwtUtil.generateToken(user, user.getId(), user.getRole().name());
+
+        return buildAuthResponse(token, user);
+    }
+
+    /**
+     * Resends a new OTP to the user's email.
+     */
+    @Transactional
+    public void resendOtp(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+
+        if (user.isVerified()) {
+            throw new RuntimeException("User is already verified.");
+        }
+
+        String rawOtp = otpService.generateAndSaveOtp(email);
+        emailService.sendEmailOtp(email, rawOtp);
     }
 
     // ═══════════════════════════════════════════════════════════

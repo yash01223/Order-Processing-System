@@ -2,6 +2,8 @@ package com.project.order_processing_app.controller;
 
 import com.project.order_processing_app.dto.request.LoginRequest;
 import com.project.order_processing_app.dto.request.RegisterRequest;
+import com.project.order_processing_app.dto.request.ResendOtpRequest;
+import com.project.order_processing_app.dto.request.VerifyOtpRequest;
 import com.project.order_processing_app.dto.response.AuthResponse;
 import com.project.order_processing_app.service.AuthService;
 import jakarta.validation.Valid;
@@ -29,5 +31,17 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<AuthResponse> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        AuthResponse response = authService.verifyOtp(request.getEmail(), request.getOtp());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<String> resendOtp(@Valid @RequestBody ResendOtpRequest request) {
+        authService.resendOtp(request.getEmail());
+        return ResponseEntity.ok("OTP has been resent to your email.");
     }
 }

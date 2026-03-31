@@ -1,4 +1,7 @@
--- One-time cleanup: clear stale orders so status_updated_at column starts fresh.
--- IMPORTANT: Remove or comment out this file after the first successful startup,
--- otherwise it will wipe all orders on every restart.
 TRUNCATE TABLE orders CASCADE;
+
+-- Ensure the is_verified column exists before updating
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE;
+
+-- Mark existing users as verified so they are not locked out
+UPDATE users SET is_verified = true;

@@ -102,6 +102,18 @@ public class GlobalExceptionHandler {
                 .body(buildError(HttpStatus.BAD_REQUEST, "Cancellation Not Allowed", ex.getMessage()));
     }
 
+    /**
+     * Handles InvalidOtpException.
+     * Triggered when OTP verification fails (wrong code, expired, or max attempts).
+     * Returns HTTP 400.
+     */
+    @ExceptionHandler(InvalidOtpException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidOtp(InvalidOtpException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(buildError(HttpStatus.BAD_REQUEST, "Invalid OTP", ex.getMessage()));
+    }
+
     // ═══════════════════════════════════════════════════════════
     //  400 — Input Validation Failures
     // ═══════════════════════════════════════════════════════════

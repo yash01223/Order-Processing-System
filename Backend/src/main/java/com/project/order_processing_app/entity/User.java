@@ -91,6 +91,10 @@ public class User implements UserDetails {
     @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
 
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean isVerified = false;
+
     /**
      * @PrePersist lifecycle hook: called by Hibernate just before INSERT.
      * Sets createdAt to current UTC time automatically.
@@ -130,5 +134,5 @@ public class User implements UserDetails {
     @Override public boolean isAccountNonExpired()     { return true; }
     @Override public boolean isAccountNonLocked()      { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled()               { return true; }
+    @Override public boolean isEnabled()               { return isVerified; }
 }
