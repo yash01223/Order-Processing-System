@@ -6,13 +6,20 @@ import { Shield, User } from 'lucide-react';
 const Overview = () => {
   const { user, isAdmin } = useAuth();
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   return (
     <div className="space-y-5">
       {/* Page Header */}
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">
-            Good day, <span className="text-gradient-primary">{user.name}</span> 👋
+            {getGreeting()}, <span className="text-gradient-primary">{user.name}</span> 👋
           </h1>
           <p className="text-sm text-muted mt-0.5">
             {isAdmin
